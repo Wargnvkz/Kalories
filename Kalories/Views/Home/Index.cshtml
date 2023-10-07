@@ -1,0 +1,60 @@
+﻿@model IndexViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-left">
+    <div>
+        <table border="1">
+            <tr>
+                <th>Название</th>
+                <th>Ккал</th>
+                <th>Грамм</th>
+                <th>Σ</th>
+                <th>Удалить</th>
+            </tr>
+            @{
+                if (Model != null && Model.Foods != null)
+                {
+                    foreach (var item in Model.Foods)
+                    {
+                        <tr>
+                            <td>@item.FoodName</td>
+                            <td>@item.CaloriesPer100</td>
+                            <td>@item.Weight</td>
+                            <td>@((item.Weight/100*item.CaloriesPer100).ToString("F1"))</td>
+                            <td style="text-align:center">
+                                @Html.ActionLink("X", "Delete", "Home", new { id = item.FoodID })
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+            @{
+                if (Model.Food == null)
+                    Model.Food = new KaloriesDB.Food();
+            }
+            @using (Html.BeginForm("Add", "Home", FormMethod.Post))
+            {
+                <tr>
+                    <td>@Html.TextBoxFor(model => model.Food.FoodName, new {style = "width:100px"})</td>
+                    <td>@Html.TextBoxFor(model => model.Food.CaloriesPer100, new {style = "width:100px"})</td>
+                    <td>@Html.TextBoxFor(model => model.Food.Weight, new {style = "width:100px"})</td>
+                    <td></td>
+                    <td><input type="submit" value="Добавить" /></td>
+                </tr>
+            }
+        </table>
+
+        @{
+            if (Model != null && Model.Foods != null)
+            {
+                <p>Всего: @Model.Foods.Sum(i => i.Weight / 100 * i.CaloriesPer100) ккал</p>
+            }
+        }
+    </div>
+
+    <div>
+        @Html.ActionLink("Очистить", "Clear", "Home")
+    </div>
+</div>
